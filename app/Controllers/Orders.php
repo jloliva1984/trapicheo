@@ -122,10 +122,11 @@ class Orders extends BaseController
         $request = service('request');
         $orderId=$request->getPost('orderId');
         $order=new OrderModel();
-        $orderDetails=$order->getOrderDetails($orderId);var_dump($orderDetails);die;
+        $orderDetails=$order->getOrderDetails($orderId);
+       
         $html='';
         $html.='<div class="card">
-        <div class="card-header text-right">Order # '.$orderDetails[0]->orderId .'| Account - '.$orderDetails[0]->account.'</div>
+        <div class="card-header text-right">Order # '.$orderDetails[0]->fecha .'| Account - '.$orderDetails[0]->account.'</div>
         <div class="card-body">
             <div class="row">
                 <div class="col-md-12" align="center">
@@ -133,10 +134,10 @@ class Orders extends BaseController
                         <thead class="thead-dark">';
                      
                             $html.='<tr>
-                                <th width="">Product</th>
-                                <th width="">Price</th>
-                                <th>Amount</th>
-                                <th>Total Price</th>
+                                <th width="">Producto</th>
+                                <th width="">Precio</th>
+                                <th>Cantidad</th>
+                                <th>Precio Total</th>
                              </tr></thead>';
                           
 
@@ -145,9 +146,9 @@ class Orders extends BaseController
                         foreach($orderDetails as $orderDetail):
                             $html.='<tr>
                             <th width=""><p class="small">'.$orderDetail->product.'</p></th>
-                            <th width=""><p class="small">'.$orderDetail->price.'</p></th>
+                            <th width=""><p class="small">'.$orderDetail->realPrice.'</p></th>
                             <th><p class="small">'.$orderDetail->amount.'</p></th>
-                            <th><p class="small">'.$orderDetail->productTotalPrice.'</p></th>
+                            <th><p class="small">'.$orderDetail->realPrice*$orderDetail->amount.'</p></th>
                             </tr>';
 
                            endforeach;
@@ -157,14 +158,14 @@ class Orders extends BaseController
                             <tr>
                                 <td colspan="3" align="right"><strong>Subtotal</strong></td>
                                 <td colspan="">
-                                    <input type="text" class="form-control form-control-sm text-right" name="monto_subtotal00" id="monto_subtotal00" readonly="" value="$ '.$orderDetail->subtotal.'">
+                                    <input type="text" class="form-control form-control-sm text-right" name="monto_subtotal00" id="monto_subtotal00" readonly="" value="$ '.$orderDetail->realPrice.'">
                                 </td>
                             </tr>
 
                             <tr>
                                 <td colspan="3" align="right"><strong>Tax</strong></td>
                                 <td colspan="">
-                                    <input type="text" class="form-control form-control-sm text-right" name="monto_subtotal12" id="monto_subtotal12" readonly="" value="'.$orderDetail->tax.'%">
+                                    <input type="text" class="form-control form-control-sm text-right" name="monto_subtotal12" id="monto_subtotal12" readonly="" value="'.$orderDetail->realPrice.'%">
                                 </td>
                             </tr>
 
@@ -187,6 +188,7 @@ class Orders extends BaseController
     </div>';
 
        echo json_encode($html);
+       
      
     }
 

@@ -101,19 +101,20 @@ class OrderModel extends Model
         $query = $db->query("SELECT
         orders.accountId,
         productsorders.amount,
-        productsorders.productTotalPrice,
+        productsorders.realPrice,
         accounts.name AS account,
         products.name AS product,
+        Sum(productsorders.realPrice) AS totalRealPrice,
         products.price,
-        orders.subtotal,
-        orders.tax,
         orders.total,
-        orders.orderId
+        orders.orderId,
+        products.cubaPrice,
+        orders.fecha
         FROM
-                orders
-                Inner Join productsorders ON orders.orderId = productsorders.orderId
-                Inner Join accounts ON accounts.accountId = orders.accountId
-                Inner Join products ON products.productId = productsorders.productId
+                        orders
+                        Inner Join productsorders ON orders.orderId = productsorders.orderId
+                        Inner Join accounts ON accounts.accountId = orders.accountId
+                        Inner Join products ON products.productId = productsorders.productId
         WHERE
                 orders.orderId =  '$orderId'
               
