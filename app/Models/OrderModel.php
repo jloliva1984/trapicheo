@@ -109,7 +109,8 @@ class OrderModel extends Model
         orders.total,
         orders.orderId,
         products.cubaPrice,
-        orders.fecha
+        orders.fecha,
+        productsorders.payed
         FROM
                         orders
                         Inner Join productsorders ON orders.orderId = productsorders.orderId

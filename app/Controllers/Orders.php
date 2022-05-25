@@ -138,6 +138,7 @@ class Orders extends BaseController
                                 <th width="">Precio</th>
                                 <th>Cantidad</th>
                                 <th>Precio Total</th>
+                                <th>Estado</th>
                              </tr></thead>';
                           
 
@@ -148,7 +149,10 @@ class Orders extends BaseController
                             <th width=""><p class="small">'.$orderDetail->product.'</p></th>
                             <th width=""><p class="small">'.$orderDetail->realPrice.'</p></th>
                             <th><p class="small">'.$orderDetail->amount.'</p></th>
-                            <th><p class="small">'.$orderDetail->realPrice*$orderDetail->amount.'</p></th>
+                            <th><p class="small">'.$orderDetail->realPrice*$orderDetail->amount.'</p></th>';
+                            if($orderDetail->payed){$estado='pagado';} else {$estado='por pagar';}
+                            $html.='
+                            <th><p class="small">'.$estado.'</p></th>
                             </tr>';
 
                            endforeach;
@@ -156,25 +160,20 @@ class Orders extends BaseController
                        
                             <tfoot>
                             <tr>
-                                <td colspan="3" align="right"><strong>Subtotal</strong></td>
+                                <td colspan="4" align="right"><strong>Total Pagado</strong></td>
                                 <td colspan="">
                                     <input type="text" class="form-control form-control-sm text-right" name="monto_subtotal00" id="monto_subtotal00" readonly="" value="$ '.$orderDetail->realPrice.'">
                                 </td>
                             </tr>
 
                             <tr>
-                                <td colspan="3" align="right"><strong>Tax</strong></td>
+                                <td colspan="4" align="right"><strong>Total x Pagar</strong></td>
                                 <td colspan="">
                                     <input type="text" class="form-control form-control-sm text-right" name="monto_subtotal12" id="monto_subtotal12" readonly="" value="'.$orderDetail->realPrice.'%">
                                 </td>
                             </tr>
 
-                            <tr>
-                                <td colspan="3" align="right"><strong>Total</strong></td>
-                                <td colspan="">
-                                    <input type="text" class="form-control form-control-sm text-right" name="monto_iva" id="monto_iva" readonly="" value="$ '.$orderDetail->total.'">
-                                </td>
-                            </tr>
+                            
 
                             </tfoot>
                            
