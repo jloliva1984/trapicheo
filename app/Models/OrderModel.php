@@ -30,10 +30,12 @@ class OrderModel extends Model
             
         ];
         
+        
         $builder->insert($data);
        // $this->db->transComplete();
         if($db->affectedRows()>0)
             {
+             
             return $db->insertID();	
             }
             else
@@ -64,6 +66,7 @@ class OrderModel extends Model
         ");
         if($db->affectedRows()>0)
          {
+             var_dump($query->getResult());die;
           return $query->getResult();
          }
          else { return 0;}
@@ -104,7 +107,7 @@ class OrderModel extends Model
         productsorders.realPrice,
         accounts.name AS account,
         products.name AS product,
-        Sum(productsorders.realPrice) AS totalRealPrice,
+        
         products.price,
         orders.total,
         orders.orderId,

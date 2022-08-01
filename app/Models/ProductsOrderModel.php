@@ -23,7 +23,7 @@ class ProductsOrderModel extends Model
         $builder->insert($data);
        // $this->db->transComplete();
         if($db->affectedRows()>0)
-            {
+            { 
                return $db->insertID();	
             }
             else

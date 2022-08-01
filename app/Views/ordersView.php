@@ -94,7 +94,7 @@
   <div class="modal-dialog modal-lg" role="document">
     <div class="modal-content">
       <div class="modal-header btn-info">
-        <h5 class="modal-title" id="orderDetailsModalLabel">Order Details</h5>
+        <h5 class="modal-title" id="orderDetailsModalLabel">Detalles Factura</h5>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
@@ -377,7 +377,8 @@ function saveOrder() {
         data: form_data,
         //dataType : 'json',
         success: function (response) {
-          $('#orders').append(response);
+          alert(response);
+        //  $('#orders').append(response);
           //ask For confirmation
           swal({
               

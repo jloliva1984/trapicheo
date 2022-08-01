@@ -51,9 +51,9 @@ class Orders extends BaseController
            $realPrice=$request->getPost('realPrice');
            $pagado=$request->getPost('pagado');
            $fecha = date('Y-m-d H:i:s');
-           die($fecha);
+           
             
-                     
+                  
            if(isset($accountId) && $accountId!=NULL && isset($productosId) && $productosId!=NULL && isset($prices) && $prices!=NULL && isset($amounts) && $amounts!=NULL)
            {
             
@@ -70,27 +70,30 @@ class Orders extends BaseController
             $db->transBegin();
 
             $insertedOrderId=$order->saveOrder($accountId,0,0,$fecha);
-                      
+            
             for($count=0;$count<count($productosId);$count++)
             {
                 if(isset($pagado[$count])){$payed=1;} else {$payed=0;}//1 pagado   0 por pagar
                 
                 $productsOrder=new ProductsOrderModel();
                 $productsOrderInsertedId=$productsOrder->saveProductsOrder($accountId,$insertedOrderId,$productosId[$count],$amounts[$count],$realPrice[$count],$payed);
-            
+                
                    
-                    if($productsOrderInsertedId !=0)//searching inserted data to concat html variable for sending it to the view
-                    {
-                    $orderData=$order->getOrderData($insertedOrderId);
+                //     if($productsOrderInsertedId !=0)//searching inserted data to concat html variable for sending it to the view
+                //     {
+                    
+                //     $orderData=$order->getOrderData($insertedOrderId);
 
-                     $html[0].='<tr><td>'.$orderData[0]->account.'</td><td>'.$orderData[0]->orderId.'</td><td>'.$orderData[0]->totalRealPrice.'</td><td><button type="button" name="remove_descarga" class="btn btn-danger  btn-sm" value="'.$orderData[0]->orderId.'" remove_descarga" id="'.$orderData[0]->orderId.'" onclick="eliminar_descarga('.$orderData[0]->orderId.')"><i class="fa fa-minus-circle"></i></td></tr>';
+                //      $html[0].='<tr><td>'.$orderData[0]->account.'</td><td>'.$orderData[0]->orderId.'</td><td>'.$orderData[0]->totalRealPrice.'</td><td><button type="button" name="remove_descarga" class="btn btn-danger  btn-sm" value="'.$orderData[0]->orderId.'" remove_descarga" id="'.$orderData[0]->orderId.'" onclick="eliminar_descarga('.$orderData[0]->orderId.')"><i class="fa fa-minus-circle"></i></td></tr>';
                      
-                }
+                // }
                 
                     $subTotal+=$amounts[$count]*$prices[$count];
-                    
+                       
 
             }
+
+            
             // $total=$subTotal*($order->getTax($insertedOrderId)[0]->tax)/100+$subTotal;
             // $result=$order->setOrderTotals($insertedOrderId,$subTotal,$total);
 
@@ -106,9 +109,10 @@ class Orders extends BaseController
         //end using transactions
 
            }
-           $html=strip_slashes($html[0]);
-           $html[0] = str_replace ('"\"',' ', $html[0]);
-           echo ($html)  ; 
+        //    $html=strip_slashes($html[0]);
+        //    $html[0] = str_replace ('"\"',' ', $html[0]);
+           //echo ($html)  ; 
+           echo ('ok')  ; 
 
         } 
         else
@@ -123,10 +127,10 @@ class Orders extends BaseController
         $orderId=$request->getPost('orderId');
         $order=new OrderModel();
         $orderDetails=$order->getOrderDetails($orderId);
-       
+       //var_dump( $orderDetails);
         $html='';
         $html.='<div class="card">
-        <div class="card-header text-right">Order # '.$orderDetails[0]->fecha .'| Account - '.$orderDetails[0]->account.'</div>
+        <div class="card-header text-right">Order # '.$orderDetails[0]->fecha .'| Cliente - '.$orderDetails[0]->account.'</div>
         <div class="card-body">
             <div class="row">
                 <div class="col-md-12" align="center">
@@ -144,13 +148,17 @@ class Orders extends BaseController
 
                           
                         $html.='<tbody id="">';
+                        $totalPagado=0;
+                        $totalPorPagar=0;
                         foreach($orderDetails as $orderDetail):
                             $html.='<tr>
                             <th width=""><p class="small">'.$orderDetail->product.'</p></th>
                             <th width=""><p class="small">'.$orderDetail->realPrice.'</p></th>
                             <th><p class="small">'.$orderDetail->amount.'</p></th>
                             <th><p class="small">'.$orderDetail->realPrice*$orderDetail->amount.'</p></th>';
-                            if($orderDetail->payed){$estado='pagado';} else {$estado='por pagar';}
+                            if($orderDetail->payed){$estado='por pagar'; $totalPorPagar+=$orderDetail->realPrice*$orderDetail->amount;} 
+                            else
+                             {$estado='pagado'; $totalPagado+=$orderDetail->realPrice*$orderDetail->amount;}
                             $html.='
                             <th><p class="small">'.$estado.'</p></th>
                             </tr>';
@@ -162,14 +170,20 @@ class Orders extends BaseController
                             <tr>
                                 <td colspan="4" align="right"><strong>Total Pagado</strong></td>
                                 <td colspan="">
-                                    <input type="text" class="form-control form-control-sm text-right" name="monto_subtotal00" id="monto_subtotal00" readonly="" value="$ '.$orderDetail->realPrice.'">
+                                    <input type="text" class="form-control form-control-sm text-right" name="monto_subtotal00" id="monto_subtotal00" readonly="" value="$ '.$totalPagado.'">
                                 </td>
                             </tr>
 
                             <tr>
                                 <td colspan="4" align="right"><strong>Total x Pagar</strong></td>
                                 <td colspan="">
-                                    <input type="text" class="form-control form-control-sm text-right" name="monto_subtotal12" id="monto_subtotal12" readonly="" value="'.$orderDetail->realPrice.'%">
+                                    <input type="text" class="form-control form-control-sm text-right" name="monto_subtotal12" id="monto_subtotal12" readonly="" value="'.$totalPorPagar.'">
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="4" align="right"><strong>Factura total</strong></td>
+                                <td colspan="">
+                                    <input type="text" class="form-control form-control-sm text-right" name="monto_subtotal12" id="monto_subtotal12" readonly="" value="'.($totalPorPagar+$totalPagado).'">
                                 </td>
                             </tr>
 
